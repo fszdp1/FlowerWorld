@@ -1,0 +1,22 @@
+﻿@{
+    ViewBag.Title = "鲜花分类";
+    Layout = "/Views/Shared/_ContentPageLayout.cshtml";
+}
+
+<div>
+    <p>鲜花类别：@ViewBag.catalogName</p>
+    @foreach (ProductList pl in ViewBag.catProducts as List<ProductList>)
+    {
+        <div style="float:left;text-align:center;width:150px;padding:1px;margin:1px;border:solid;border-color:#DEBA84">
+            <a href='Detail/@pl.p.ObjId'><img style="width:148px; height:148px" src="/Images/@pl.p.BigImg" /></a><br />
+            <span style="display:inline-block;width:150px;">@pl.p.ProductName</span><br />
+            <span style="display:inline-block;text-decoration: line-through;width:150px;border-width:0px;">市场价:@pl.p.Price</span><br />
+            @foreach (var prc in pl.pList)
+            {
+                <div style="width:100%;text-align:center"><span>@prc.memberName</span><span>价：</span><span>@prc.realPrice</span></div>
+            }
+            <a href="/Cart/AddCart/@pl.p.ObjId">购买</a> |
+            <a href="/Cart/AddFavi/@pl.p.ObjId">收藏</a>
+        </div>
+    }
+</div>

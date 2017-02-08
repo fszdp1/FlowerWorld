@@ -1,7 +1,108 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "_Layout";
 }
 
+@model HomeIndexViewModel
+<div style="width:100%;text-align:left;">
+    <table style="width:100%;">
+        <tr>
+            <td style="width: 733px">
+                <div id="focusPic1"><img src="/Images/gj1.jpg"></div>
+                <div id="focusPic2" style="display:none;"><img src="/Images/gj2.jpg"></div>
+                <div id="focusPic3" style="display:none;"><img src="/Images/gj3.jpg"></div>
+                <div id="focusPic4" style="display:none;"><img src="/Images/gj4.jpg"></div>
+                <script type="text/javascript">
+                    var _delay = 3; //图片轮转的间隔时间
+                    var _total = 4; //焦点图个数
+                    var _next = 1; //下一个焦点序号
+                    var _last = 0; //上一个焦点序号
+                    change_img();
+                    function change_img() {
+                        if (_last)
+                            document.getElementById('focusPic' + _last).style.display = 'none';
+                        document.getElementById('focusPic' + _next).style.display = 'block';
+                        _last = _next;
+                        _next++;
+                        if (_next > _total)
+                            _next = 1;
+                        setTimeout('change_img()', _delay * 1000);
+                    }
+                </script>
+            </td>
+            <td>
+                <div style="margin-left:20px">
+                    <p>花事速递</p>
+                    @foreach (string s in ViewBag.news)
+                    {
+                        <a href="news.cshtml"><span style="font :x-small;width:360px;">@s</span></a><br />
+                    }
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="width: 733px; ">
+                <p>热门分类</p>
+                @foreach (ProductCat typeGroup in Model.productCats)
+                {
+                    <span style="color:Red;font:16px 宋体;">按</span><span style="color:Red;font:16px 宋体;">@typeGroup.typeName: </span><span>|</span>
+                    foreach (ProductType n in typeGroup.types)
+                    {
+                        //string catalogName = HttpUtility.UrlEncode(n.typeName);
+                        <span><a style="font:16px 宋体;" href='Home/Catalog?typeId=@n.ObjId&typeName=@n.TypeName'>@n.TypeName</a>|</span>
+                    }
+                    <br />
+                }
+            </td>
+            <td>
+                <img src="/Images/qrjad.jpg" />
+            </td>
+        </tr>
+    </table>
+
+    <p>火热抢购</p>
+    <table style="margin:0px;border-width:0px;font-size:Small;">
+        <tr>
+            <td>
+                @foreach (ProductList pl in Model.hotProducts)
+                {
+                    <div style="float:left;text-align:center;width:150px;padding:1px;margin:1px;border:solid;border-color:#DEBA84">
+                        <a href='Home/Detail/@pl.p.ObjId'><img style="width:148px; height:148px" src="/Images/@pl.p.BigImg" /></a><br />
+                        <span style="display:inline-block;width:150px;">@pl.p.ProductName</span><br />
+                        <span style="display:inline-block;text-decoration: line-through;width:150px;border-width:0px;">市场价:@pl.p.Price</span><br />
+                        @foreach (Prices prc in pl.pList)
+                        {
+                            <div style="width:100%;text-align:center"><span>@prc.memberName</span><span>价：</span><span>@prc.realPrice</span></div>
+                        }
+                        <a href="/Cart/AddCart/@pl.p.ObjId">购买</a> |
+                        <a href="/Cart/AddFavi/@pl.p.ObjId">收藏</a>
+                    </div>
+                }
+            </td>
+        </tr>
+    </table>
+    <p>诚意推荐</p>
+    <table style="margin:0px;border-width:0px;font-size:Small;">
+        <tr>
+            <td>
+                @foreach (ProductList pl in Model.recProducts)
+                {
+                    <div style="float:left;text-align:center;width:150px;padding:1px;margin:1px;border:solid;border-color:#DEBA84">
+                        <a href='Home/Detail/@pl.p.ObjId'><img style="width:148px; height:148px" src="/Images/@pl.p.BigImg" /></a><br />
+                        <span style="width:100%">@pl.p.ProductName</span><br />
+                        <span style="display:inline-block;text-decoration: line-through;width:150px;border-width:0px;">市场价:@pl.p.Price</span><br />
+                        @foreach (Prices prc in pl.pList)
+                        {
+                            <div style="width:100%;text-align:center"><span>@prc.memberName</span><span>价：</span><span>@prc.realPrice</span></div>
+                        }
+                        <a href="/Cart/AddCart/@pl.p.ObjId">购买</a> |
+                        <a href="/Cart/AddFavi/@pl.p.ObjId">收藏</a>
+                    </div>
+                }
+            </td>
+        </tr>
+    </table>
+</div>
+<!--以下代码展示了用bootstrap预定义样式显示轮动图片的写法，与上面的旧式写法形成对照
 <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="6000">
     <ol class="carousel-indicators">
         <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -107,3 +208,4 @@
         </ul>
     </div>
 </div>
+-->

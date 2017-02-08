@@ -6,21 +6,13 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <form asp-area="" asp-controller="Account" asp-action="LogOff" method="post" id="logoutForm" class="navbar-right">
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-            </li>
-            <li>
-                <button type="submit" class="btn btn-link navbar-btn navbar-link">Log off</button>
-            </li>
-        </ul>
+    <p>欢迎您，@UserManager.GetUserName(User)!</p>
+    <form id="logoutForm" asp-controller="Account" asp-action="LogOff" method="post">
+        <a href="javascript:document.getElementById('logoutForm').submit()">注销</a>
     </form>
 }
 else
 {
-    <ul class="nav navbar-nav navbar-right">
-        <li><a asp-area="" asp-controller="Account" asp-action="Register">Register</a></li>
-        <li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
-    </ul>
+    <p>欢迎光临。送花请<a asp-area="" asp-controller="Account" asp-action="Login">登录</a>。</p>
+    <p>免费<a asp-area="" asp-controller="Account" asp-action="Register">注册</a>，享受会员优惠！</p>
 }

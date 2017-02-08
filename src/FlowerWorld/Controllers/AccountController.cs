@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using FlowerWorld.Models;
 using FlowerWorld.Models.AccountViewModels;
 using FlowerWorld.Services;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace FlowerWorld.Controllers
 {
@@ -22,19 +23,22 @@ namespace FlowerWorld.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
+        private readonly DBFlowerContext db;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            DBFlowerContext flowerDB)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<AccountController>();
+            db = flowerDB;
         }
 
         //
@@ -43,6 +47,7 @@ namespace FlowerWorld.Controllers
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
         {
+            ViewBag.Title = "登录";
             ViewData["ReturnUrl"] = returnUrl;
             return View();
         }
@@ -92,6 +97,7 @@ namespace FlowerWorld.Controllers
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+            ViewBag.Title = "注册";
             return View();
         }
 
@@ -100,7 +106,7 @@ namespace FlowerWorld.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = null)
+        public async Task<IActionResult> Register(RegisterModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
@@ -109,6 +115,17 @@ namespace FlowerWorld.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    Customer c = db.Customer.Add(new Customer()).Entity;
+                    c.UserId = user.Id;
+                    c.UserName = model.Email;
+                    c.Email = model.Email;
+                    c.HomePhone = model.HomePhone;
+                    c.HomePhone = model.MobilePhone;
+                    c.OfficePhone = model.OfficePhone;
+                    c.QqNumber = model.QqNum;
+                    c.RegistDate = DateTime.Now;
+                    c.TheCustomerType = 1;
+                    db.SaveChanges();
                     // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
                     // Send an email with this link
                     //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

@@ -1,0 +1,71 @@
+﻿@model ProductList
+@{
+    ViewBag.Title = "鲜花详情";
+    Layout = "~/Views/Shared/_ContentPageLayout.cshtml";
+}
+
+<div>
+    <table style="width:100%;">
+        <tr>
+            <td style="width: 310px;">
+                <img src="/Images/@Model.p.SmallImg" style="width:300px;height:300px;" />
+            </td>
+            <td style="text-align:left;">
+                <p><b>商品名称：@Model.p.ProductName</b></p>
+                <p><b>商品编码：@Model.p.ProductId</b></p>
+                <p><b>简单描述：@Model.p.Feature</b></p>
+                <p><b>市场价格：@Model.p.Price</b></p>
+                @foreach (var p in Model.pList)
+                {
+                    <p><b><span>@p.memberName</span><span>会员价：</span><span>@p.realPrice</span><span>元</span></b></p>
+                }
+                <div style="padding: 0px;margin:0px;">
+                    <a href="/Cart/AddCart/@Model.p.ObjId?retUrl=@WebUtility.UrlEncode(ViewBag.contBuy)"><img src="/Images/btn_car.gif" style="height:32px;" /></a>
+                    &nbsp;&nbsp;
+                    <a href="/Cart/AddFavi/@Model.p.ObjId?retUrl=@WebUtility.UrlEncode(ViewBag.contBuy)"><img src="/Images/btn_fav.gif" style="height:32px;" /></a>
+                    &nbsp;
+                    <a href="@ViewBag.contBuy">返回继续选购</a>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <fieldset>
+        <legend>商品说明</legend>
+        <div>
+            <h5>商品规格：</h5>
+            <p style="font-size:small"><span>@Model.p.Description</span></p>
+            <p style="font-size:small;color:#ff0000;">（备注：如需当天配送，请订购前咨询客服是否有货）</p>
+            <h5>花言花语：</h5>
+            <p style="font-size:small"><span>@Model.p.Meaning</span></p>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>备注说明</legend>
+        <div style="color:#000000">
+            <p style="color:#000000;font-size:small;text-align:left;">
+                温馨提示:&nbsp;&nbsp;花言花语仅供参考，您可以在下单时填写卡片留言<br />&nbsp;<br />
+                欢迎您光临花花世界网(<a href="http://www.songhua.com/">www.songhua.com</a>)，为了方便您的购物建议您阅读以下说明：<br />&nbsp;<br />
+                替换原则: <br />
+                由于地域或季节的限制，需要更换主花材时，我们将电话向订货人提出更换建议，假如在有效配送时间内得不到订货人的确认，我们将采用同等价值或相同寓意的花材代替。配材在分店内无的情况下将采取时令等值配材替代，实际送花以图片为参考，以商品规格文字说明为主。鲜花为手工做品，实际花束可能会与图示有些出入，但我们保证鲜花的主花材品种、新鲜程度、数量、颜色与说明一致。<br /><br />
+
+                订购时间: <br />
+                您可以24小时在线提交订单，我们的客服人员工作时间是：
+                9:00-凌晨00：30，如果您是在20：30以后支付订单，且要求在第二天清晨送达，限于实际情况，可能无法实现，分店工作人员一般于20:30下班,第二日下午则不在此限制范围。您可以当天提交当天配送的订单，但您需在17：00前提交并支付成功。如果是17：00后才提交和支付，将按如下原则处理：如您的订单在我们配送能力之内，将安排当天送达；否则将按您的要求转移配送日期.
+                上述情况，如果您想确定能否按您的时间送达，请联系我司客服人员确认。&nbsp;&nbsp;
+            </p>
+            <p style="color:#000000;font-size:small;text-align:left;">
+                定购方式: <br />在线订购：如果您是初次网上购物,您可以直接<a href="~/Account/Register.cshtml">
+                    注册
+                </a>下定单.<br />
+                电话订购：您可以直接拨打我们的全国免费订购热线 400-8888-888直接电话订购.<br />&nbsp;<br />&nbsp;支付方式: <br />1.在线支付<br />
+                2.银行汇款或者ATM机转帐您可以直接带上您的身份证到银行柜台办理,或者到自助取款机直接转帐.具体帐号<a href="">
+                    请点击这里
+                </a>&nbsp;<br />&nbsp;<br />服务提示: <br />非节日期间，可指定时间段送达；节日期间，只保证当日送达，不提供定时服务。<br />
+                对于特殊花材的款式,例大型花篮,蓝玫瑰紫玫瑰等,请订购前咨询客服是否有货. <br />
+                鲜花配送范围：中国全境，只要分店内能配送的位置我们都不会收取您的送费。<br /><br />服务时间：<br />节假日不休息，每周7天<br />全天候服务，24小时接单；<br />
+                每日送花时间：8:00-20：00。<br />其它时间送花酌情加收10-100元服务费。<br />国内热线: 400-8888-888 [12小时]<br />
+                国际热线: +86-0756-88888888[24小时]
+            </p>
+        </div>
+    </fieldset>
+</div>

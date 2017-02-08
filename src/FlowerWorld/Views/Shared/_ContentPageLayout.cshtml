@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "_Layout.cshtml";
+}
+
+<table style="width:100%;">
+    <tr>
+        <td style="width:150px;vertical-align:top;">
+            <p style="color:Red;font:16px 宋体;text-align:center;text-decoration:underline;">热门分类</p>
+            <table style="width:100%">
+                @foreach (ProductCat s in ViewBag.productCats as List<ProductCat>)
+                {
+                    <tr><td style="color:Red;font:12px 宋体;text-align:center;"><span>按</span><span>@s.typeName</span></td></tr>
+                    <tr>
+                        <td style="width:100%;padding-top:0px;padding-bottom:10px">
+                            @foreach (var n in s.types)
+                            {
+                                //string catalogName = HttpUtility.UrlEncode(n.typeName);
+                                <div style="float:left;text-align:center;width:50%"><a style="font:12px 宋体;" href='@Url.Action("Catalog","Home",new{typeId=n.ObjId.ToString(),typeName=n.TypeName},null)'>@n.TypeName</a></div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </table>
+        </td>
+        <td style="width:850px;vertical-align:top;">
+            @RenderBody()
+        </td>
+    </tr>
+</table>

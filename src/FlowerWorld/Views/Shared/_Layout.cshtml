@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+﻿@inject DBFlowerContext db
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - FlowerWorld</title>
+    <title>@ViewData["Title"] - Flower World</title>
 
     <environment names="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
@@ -18,32 +19,105 @@
     @Html.ApplicationInsightsJavaScript(TelemetryConfiguration)
 </head>
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">FlowerWorld</a>
+
+    <div class="col-md-12">
+        <div style="float:left;">
+            <a href="/"><img id="LogoImage" src="/Images/logo2.jpg" style="height:75px" /></a>
+        </div>
+        <div style="float:left; margin-left:50px;">
+            <div style="text-align:right">
+                <img id="FreePhoneImage" src="/Images/top400.gif" style="Height:50px" />
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
-                    <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
-                </ul>
+            <div>
+                <img id="QualityImage" src="/Images/top_bh1.gif" style="Height:25px" />
+                <img id="DispatchImage" src="/Images/top_bh2.gif" style="Height:25px" />
+                <img id="SpeedImage" src="/Images/top_bh3.gif" style="Height:25px" />
+            </div>
+        </div>
+        <div style="float:left; margin-left:50px; font:12px 宋体;">
+            <div style="text-align:center">
                 @await Html.PartialAsync("_LoginPartial")
+            </div>
+            <div style="margin-top:10px; text-align:center">
+                <span lang="zh-cn">收藏本站 | 关于我们 | 联系我们</span>
+                <span lang="zh-cn">&nbsp;&nbsp; </span>
+                <img src="/Images/car_10.gif" style="Width:16px" /><a href="/Cart?retUrl=@WebUtility.UrlEncode(ViewBag.contBuy.ToString())">
+                    <span lang="zh-cn">我的购物车</span>
+                </a>
+                <img src="/Images/Users.png" style="Width:12px" /><a href="/Account/MemberHome"><span>会员中心</span></a>
             </div>
         </div>
     </div>
+
     <div class="container body-content">
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; 2017 - FlowerWorld</p>
+            <div style="margin-top:20px;margin-bottom:10px;text-align:center">
+                @foreach (var row in db.PaymentType.Where<PaymentType>(m => m.ObjId > 0))
+                {
+                    <img src="/Images/@row.SmallImg" />
+                }
+            </div>
+            <div style="font: 12px 宋体; ">
+                <A title="" href="http://www.0571ef.com/" target="_blank">杭州服装批发</A>|
+                <A title="山东省城市服务技术学院" href="http://www.csfwjs.com/" target="_blank">山东城市技术学院</A>|
+                <A title="杭州服装批发" href="http://www.0571ef.com/" target="_blank">杭州服装批发</A>|
+                <A title="哈尔滨鲜花网" href="http://www.lmln.net/" target="_blank">哈尔滨鲜花网</A>|
+                <A title="深圳鲜花" href="http://www.floweryj.com/" target="_blank">花易家鲜花</A>|
+                <A title="施华洛世奇" href="http://www.925china.cn/" target="_blank">施华洛世奇</A>|
+                <A title="昆明干花网" href="http://www.kmghw.cn/" target="_blank">昆明干花网</A>|
+                <A title="中国网络调查" href="http://www.bcyh.cn/" target="_blank">中国网络调查</A>|
+                <A title="外贸尾货网" href="http://www.waimaozhekou.com/" target="_blank">外贸尾货网</A>|
+                <A title="东莞网站建设" href="http://www.dgwzjs.cn/" target="_blank">东莞网站建设</A>|
+                <A title="梵宫家纺" href="http://www.fgong.com/" target="_blank">梵宫家纺</A>|
+                <A title="花卉大世界" href="http://www.flower800.com.cn/" target="_blank">花卉大世界</A>|
+                <A title="珠宝钻石翡翠网" href="http://www.yhgem.com/" target="_blank">珠宝钻石翡翠网</A>|
+                <A title="玫琳凯化妆品" href="http://www.520zj.com.cn/" target="_blank">玫琳凯化妆品</A>|
+                <A title="鞋易新闻" href="http://news.wooshoes.com/" target="_blank">鞋易新闻</A>|
+                <A title="减肥产品" href="http://www.yayacui.com/" target="_blank">减肥产品</A>|
+                <A title="喔喔礼品网" href="http://www.55gifts.com/" target="_blank">喔喔礼品网</A>|
+                <A title="联盟信息" href="http://www.gjhua.com/infolist.php" target="_blank">联盟信息</A>|
+                <A title="9点9元批发" href="http://www.9d9y.com/" target="_blank">9点9元批发</A>|
+                <A title="婚礼花艺" href="http://m.591wed.com/18/" target="_blank">婚礼花艺</A>|
+                <A title="上海鲜花速递" href="http://sh.58.com/lipinxianhua/" target="_blank">上海鲜花速递</A>|
+                <A title="上海鲜花店" href="http://sh.58.com/xianhua/" target="_blank">上海鲜花店</A>|
+                <A title="天津鲜花速递" href="http://tj.58.com/lipinxianhua/" target="_blank">天津鲜花速递</A>
+            </div>
+            <div>
+                <table style="width: 100%;height: 185px;font: 12px/14px 宋体;">
+                    <tr>
+                        <td style="text-align:center; width: 660px;" colspan="2">
+                            <!--nav style="font:22px 宋体;text-align:center"><a>公司介绍</a><a>送花流程</a><a>配送说明</a><a>注意事项</a><a>网站导航</a><a>隐私条款</a></!--nav-->
+                            <input style="font:18px 宋体;" value="公司介绍" type="button" />&nbsp;<input style="font:18px 宋体;" value="送花流程" type="button" />&nbsp;
+                            <input style="font:18px 宋体;" value="配送说明" type="button" />&nbsp;<input style="font:18px 宋体;" value="注意事项" type="button" />&nbsp;
+                            <input style="font:18px 宋体;" value="网站导航" type="button" />&nbsp;<input style="font:18px 宋体;" value="隐私条款" type="button" />
+                        </td>
+                        <td style="font:14px 宋体;">
+                            <a href="javascript:location.reload();">Top</a>
+                            <a href="javascript:history.go(-1);">Back</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width:150px; vertical-align:middle">
+                            <img src="/Images/bottomlogo.gif" />
+                        </td>
+                        <td style="text-align:center; vertical-align:top; width: 660px; font: 14px 宋体;">
+                            <span lang="zh-cn">
+                                <br />客服时间：7×24全天服务<br />
+                                全国免费订购热线：4008888888<br />
+                                公司地址：中国珠海赤花山北京理工大学珠海学院&nbsp;&nbsp;&nbsp; 邮编：519085&nbsp;&nbsp;&nbsp;&nbsp; 电话：0756-88888888<br />
+                                MSN:&nbsp;SendFlower@hotmail.com&nbsp;&nbsp;&nbsp; QQ: 89302000&nbsp;&nbsp;&nbsp;&nbsp; Email:
+                                songhua@126.com<br />
+                                工商企业登记证号：111111111111<br />
+                            </span>
+                        </td>
+                        <td style="vertical-align:top">
+                            <img src="/Images/hz110.gif" style="width:94px" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
         </footer>
     </div>
 
@@ -67,3 +141,4 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+
