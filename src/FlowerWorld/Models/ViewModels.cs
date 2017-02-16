@@ -60,9 +60,25 @@ namespace FlowerWorld.Models
 
     public class MemberHomeModel
     {
-        public LocalPasswordModel PassWordModel { get; set; }
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "当前密码")]
+        public string OldPassword { get; set; }
+
+        [Required]
+        [StringLength(100, ErrorMessage = "{0} 必须至少包含 {2} 个字符。", MinimumLength = 6)]
+        [DataType(DataType.Password)]
+        [Display(Name = "新密码")]
+        public string NewPassword { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "确认新密码")]
+        [Compare("NewPassword", ErrorMessage = "新密码和确认密码不匹配。")]
+        public string ConfirmPassword { get; set; }
+        //public LocalPasswordModel PassWordModel { get; set; }
         public RegisterModel CustomerInfo { get; set; }
         public List<OrderList> Orders { get; set; }
+        public PagingInfo PagingInfo { get; set; }
     }
 
     public class OrderViewModel
@@ -92,6 +108,12 @@ namespace FlowerWorld.Models
         [Compare("NewPassword", ErrorMessage = "新密码和确认密码不匹配。")]
         public string ConfirmPassword { get; set; }
     }
-
+    public class PagingInfo
+    {
+        public int TotalItems { get; set; }
+        public int ItemsPerPage { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / ItemsPerPage);
+    }
     
 }

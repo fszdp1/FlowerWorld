@@ -1,4 +1,4 @@
-﻿{
+{
   "userSecretsId": "aspnet-FlowerWorld-a177a8a2-d4ba-4147-8752-e7c51a0f72ba",
 
   "dependencies": {
@@ -47,7 +47,10 @@
     },
     "Microsoft.AspNetCore.Session": "1.0.0",
     "Microsoft.Extensions.Caching.Memory": "1.0.0",
-    "Microsoft.AspNetCore.Http.Extensions": "1.0.0"
+    "Microsoft.AspNetCore.Http.Extensions": "1.0.0",
+    "System.Security.Cryptography.Algorithms": "4.2.0",
+    "System.Security.Cryptography.Cng": "4.2.0",
+    "System.Security.Cryptography.Csp": "4.0.0"
   },
 
   "tools": {
