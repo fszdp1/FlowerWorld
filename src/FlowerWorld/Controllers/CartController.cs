@@ -16,7 +16,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using FlowerWorld.Infrastructure;
 
-namespace MvcDemo.Controllers
+namespace FlowerWorld.Controllers
 {
     public class CartController : Controller
     {

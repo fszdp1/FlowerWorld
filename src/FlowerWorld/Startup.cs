@@ -83,7 +83,7 @@ namespace FlowerWorld
             }
 
             app.UseApplicationInsightsExceptionTelemetry();
-
+            app.UseStatusCodePages();
             app.UseStaticFiles();
             app.UseSession();
             app.UseIdentity();

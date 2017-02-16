@@ -11,6 +11,7 @@ using Microsoft.Extensions.Logging;
 using FlowerWorld.Models;
 using FlowerWorld.Models.AccountViewModels;
 using FlowerWorld.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace FlowerWorld.Controllers
@@ -451,6 +452,150 @@ namespace FlowerWorld.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid code.");
                 return View(model);
             }
+        }
+
+        //以下代码为会员中心功能实现
+        [Authorize]
+        public ActionResult MemberHome(int page = 1,int pageSize=3)
+        {
+            ViewBag.pwdDisp = "none";
+            string[] orderStates = { "初始", "已付款", "已排产", "已生产", "已发送", "已签收", "已删除" };
+            string curName = User.Identity.Name;
+            MemberHomeModel mhm = new MemberHomeModel();
+            mhm.Orders = new List<OrderList>();
+            //mhm.PassWordModel = new LocalPasswordModel();
+            //var c =await _userManager.FindByNameAsync(curName);
+            Customer c = db.Customer.Single(m => m.UserName == curName);
+            int custId = ViewBag.uid = c.ObjId;
+            mhm.CustomerInfo = new RegisterModel { UserName = c.UserName, Email = c.Email, MobilePhone = c.MobilePhone, OfficePhone = c.OfficePhone, HomePhone = c.HomePhone, QqNum = c.QqNumber };
+            var orderlist = from a in db.Order
+                            where a.OrderState < 6 && a.TheCustomer == custId
+                            join b in db.Product on a.TheProduct equals b.ObjId
+                            join p in db.Payment on a.ThePayment equals p.ObjId
+                            join d in db.Consignee on a.TheConsignee equals d.ObjId
+                            join e in db.CustomerWords on a.ObjId equals e.TheOrder
+                            orderby a.OrderTime descending
+                            select new
+                            {
+                                orderTime = a.OrderTime,
+                                amt = a.Amt,
+                                orderState = (int)(a.OrderState),
+                                productName = b.ProductName,
+                                smallImg = b.SmallImg,
+                                transTime = p.TransTime,
+                                name = d.Name,
+                                words = e.Words,
+                                receiptFile = ""
+                            };//orderby a.OrderTime descending 
+
+            var orders = orderlist.Skip((page - 1) * pageSize).Take(pageSize);
+            foreach (var o in orders)
+            {
+                mhm.Orders.Add(new OrderList
+                {
+                    orderTime = o.orderTime == null ? default(DateTime) : o.orderTime.Value,
+                    amt = (double)(o.amt),
+                    orderState = orderStates[o.orderState],
+                    productName = o.productName,
+                    smallImg = o.smallImg,
+                    transTime = o.transTime == null ? default(DateTime) : o.transTime.Value,
+                    name = o.name,
+                    words = o.words,
+                    receiptFile = ""
+                });
+            }
+            mhm.PagingInfo = new PagingInfo { CurrentPage = page, ItemsPerPage = pageSize, TotalItems = orderlist.Count() };
+            return View("MemberHome", mhm);
+        }
+        /*join f in db.Receipt on a.ObjId equals f.TheOrder into oList
+                            from o in oList.DefaultIfEmpty()    o.receiptFile*/
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> MemberHome(MemberHomeModel mhm, int page=1, int pageSize = 3)
+        {
+            string curUser = User.Identity.Name;
+            var c = await _userManager.FindByNameAsync(curUser);
+            Customer cust = db.Customer.Single(m => m.UserName == curUser);
+            int custId = ViewBag.uid = cust.ObjId;
+            ViewBag.pwdDisp = "block";
+            IdentityResult r = await _userManager.ChangePasswordAsync(c, mhm.OldPassword, mhm.NewPassword);
+            if (r.Succeeded)
+            {
+                ViewBag.pwdDisp = "none";
+            }
+            else
+            {
+                await Response.WriteAsync("<script>alert('密码更新失败！');</script>");
+            }
+            string[] orderStates = { "初始", "已付款", "已排产", "已生产", "已发送", "已签收", "已删除" };
+            mhm.Orders = new List<OrderList>();
+            mhm.CustomerInfo = new RegisterModel { UserName = cust.UserName, Email = cust.Email, MobilePhone = cust.MobilePhone, OfficePhone = cust.OfficePhone, HomePhone = cust.HomePhone, QqNum = cust.QqNumber };
+            var orderlist = from a in db.Order
+                            where a.OrderState < 6 && a.TheCustomer == custId
+                            join b in db.Product on a.TheProduct equals b.ObjId
+                            join p in db.Payment on a.ThePayment equals p.ObjId
+                            join d in db.Consignee on a.TheConsignee equals d.ObjId
+                            join e in db.CustomerWords on a.ObjId equals e.TheOrder
+                            orderby a.OrderTime descending
+                            select new
+                            {
+                                orderTime = a.OrderTime,
+                                amt = a.Amt,
+                                orderState = (int)(a.OrderState),
+                                productName = b.ProductName,
+                                smallImg = b.SmallImg,
+                                transTime = p.TransTime,
+                                name = d.Name,
+                                words = e.Words,
+                                receiptFile = ""//o.ReceiptFile
+                            };//join f in db.Receipt on a.ObjId equals f.TheOrder into oList
+            //from o in oList.DefaultIfEmpty()
+            var orders = orderlist.Skip((page - 1) * pageSize).Take(pageSize);
+            foreach (var o in orders)
+            {
+                mhm.Orders.Add(new OrderList
+                {
+                    orderTime = o.orderTime == null ? default(DateTime) : o.orderTime.Value,
+                    amt = (double)(o.amt),
+                    orderState = orderStates[o.orderState],
+                    productName = o.productName,
+                    smallImg = o.smallImg,
+                    transTime = o.transTime == null ? default(DateTime) : o.transTime.Value,
+                    name = o.name,
+                    words = o.words,
+                    receiptFile = ""//o.receiptFile
+                });
+            }
+            mhm.PagingInfo = new PagingInfo { CurrentPage = page, ItemsPerPage = pageSize, TotalItems = orderlist.Count() };
+            return View("MemberHome", mhm);
+        }
+
+        //该方法由ajax调用
+        //public async void testMemberName(string newName, string curUserId)
+        //{
+        //    var count = _userManager.Users.Count(m => m.UserName == newName && m.Id != curUserId);
+        //    Response.ContentType = "text/plain";
+        //    await Response.WriteAsync(count.ToString());
+        //}
+
+        //此方法展示了更新用户表数据的写法。该方法由ajax调用
+        public async void updateMemberInfo(int memberId, string memberMobile, string memberOffice, string memberHome, string memberQQ)
+        {
+            //var user = await _userManager.FindByIdAsync(memberId);
+            Customer c = db.Customer.Single(m => m.ObjId == memberId);
+            //c.UserName = memberName;
+            //c.Email = memberEmail;
+            c.MobilePhone = memberMobile;
+            c.OfficePhone = memberOffice;
+            c.HomePhone = memberHome;
+            c.QqNumber = memberQQ;
+            int result = db.SaveChanges();
+            //user.UserName = memberName;
+            //user.Email = memberEmail;
+            //var identityResult = await _userManager.UpdateAsync(user);
+            //int result = identityResult.Succeeded ? 1 : 0;
+            Response.ContentType = "text/plain";
+            await Response.WriteAsync(result.ToString());
         }
 
         #region Helpers
