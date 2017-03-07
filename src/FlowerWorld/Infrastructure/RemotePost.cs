@@ -25,20 +25,20 @@ namespace FlowerWorld.Infrastructure
             context = _context;
         }
 
-        public void Post()
+        public async void Post()
         {
 
             context.Response.Clear();
-            context.Response.WriteAsync("<html><head>");
-            context.Response.WriteAsync(string.Format("</head><body onload=\"document.{0}.submit()\">", FormName));
-            context.Response.WriteAsync(string.Format("<form name=\"{0}\" method=\"{1}\" action=\"{2}\" >",
+            await context.Response.WriteAsync("<html><head>");
+            await context.Response.WriteAsync(string.Format("</head><body onload=\"document.{0}.submit()\">", FormName));
+            await context.Response.WriteAsync(string.Format("<form name=\"{0}\" method=\"{1}\" action=\"{2}\" >",
                 FormName, Method, Url));
             foreach (string[] ss in Inputs)
             {
-                context.Response.WriteAsync(string.Format("<input name=\"{0}\" type=\"hidden\" value=\"{1}\">", ss[0], ss[1]));
+                await context.Response.WriteAsync(string.Format("<input name=\"{0}\" type=\"hidden\" value=\"{1}\">", ss[0], ss[1]));
             }
-            context.Response.WriteAsync("</form>");
-            context.Response.WriteAsync("</body></html>");
+            await context.Response.WriteAsync("</form>");
+            await context.Response.WriteAsync("</body></html>");
             //context.Response.End();
         }
 

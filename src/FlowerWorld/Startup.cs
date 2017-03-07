@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -35,6 +36,7 @@ namespace FlowerWorld
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -48,13 +50,24 @@ namespace FlowerWorld
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<DBFlowerContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));//added by zheng.
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b=>b.UseRowNumberForPaging()));//added by zheng.
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+
+            ////为了在Sql Server 2008中实现分页，不能使用Fetch Next语句
+            //services.AddEntityFramework().AddDbContext<NFineDbContext>(options =>
+            //    {
+            //        options.UseSqlServer(
+            //        Configuration.GetConnectionString("MDatabase"),
+            //        b => b.UseRowNumberForPaging()
+            //        );
+
+            //    }
+            //);
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
