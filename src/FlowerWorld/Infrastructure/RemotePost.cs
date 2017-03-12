@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 namespace FlowerWorld.Infrastructure
 {
     /// <summary>
-    /// RemotePoat 的摘要说明
+    /// RemotePost 的摘要说明
     /// </summary>
     public class RemotePost
     {
@@ -25,7 +25,7 @@ namespace FlowerWorld.Infrastructure
             context = _context;
         }
 
-        public async void Post()
+        public async Task PostAsync()
         {
 
             context.Response.Clear();
@@ -42,7 +42,7 @@ namespace FlowerWorld.Infrastructure
             //context.Response.End();
         }
 
-        public static void PaymentPost(HttpContext c, string paymentUrl, string merchantId, string returnUrl, string paymentTypeObjId, string amtStr, string merTransId)
+        public async static Task PaymentPost(HttpContext c, string paymentUrl, string merchantId, string returnUrl, string paymentTypeObjId, string amtStr, string merTransId)
         {
             string xmlKey = File.ReadAllText("D:\\" + merchantId + ".xml");
             RSAParameters PrvKeyInfo = RSAUtility.GetPrvKeyFromXmlString(xmlKey);
@@ -62,7 +62,7 @@ namespace FlowerWorld.Infrastructure
             myremotepost.Inputs.Add(new string[] { "MerTransId", merTransId });
             myremotepost.Inputs.Add(new string[] { "ReturnUrl", returnUrl });
             myremotepost.Inputs.Add(new string[] { "CheckValue", signedString });
-            myremotepost.Post();
+            await myremotepost.PostAsync();
         }
 
         public static bool PaymentVerify(HttpRequest curRequest, out string merId, out string amt, out string merTransId, out string transId, out string transTime)
