@@ -15,34 +15,7 @@ namespace FlowerWorld.Infrastructure
     /// </summary>
     public class RemotePost
     {
-        private List<string[]> Inputs = new List<string[]>();
-        private HttpContext context;
-        public string Url = "";
-        public string Method = "post";
-        public string FormName = "form1";
-        public RemotePost(HttpContext _context)
-        {
-            context = _context;
-        }
-
-        public async Task PostAsync()
-        {
-
-            context.Response.Clear();
-            await context.Response.WriteAsync("<html><head>");
-            await context.Response.WriteAsync(string.Format("</head><body onload=\"document.{0}.submit()\">", FormName));
-            await context.Response.WriteAsync(string.Format("<form name=\"{0}\" method=\"{1}\" action=\"{2}\" >",
-                FormName, Method, Url));
-            foreach (string[] ss in Inputs)
-            {
-                await context.Response.WriteAsync(string.Format("<input name=\"{0}\" type=\"hidden\" value=\"{1}\">", ss[0], ss[1]));
-            }
-            await context.Response.WriteAsync("</form>");
-            await context.Response.WriteAsync("</body></html>");
-            //context.Response.End();
-        }
-
-        public async static Task PaymentPost(HttpContext c, string paymentUrl, string merchantId, string returnUrl, string paymentTypeObjId, string amtStr, string merTransId)
+        public static string getCheckValue(string merchantId, string returnUrl, string paymentTypeObjId, string amtStr, string merTransId)
         {
             string xmlKey = File.ReadAllText("D:\\" + merchantId + ".xml");
             RSAParameters PrvKeyInfo = RSAUtility.GetPrvKeyFromXmlString(xmlKey);
@@ -52,19 +25,9 @@ namespace FlowerWorld.Infrastructure
             ASCIIEncoding byteConverter = new ASCIIEncoding();
             byte[] orgData = byteConverter.GetBytes(orgString);
             byte[] signedData = rsa.SignData(orgData, HashAlgorithmName.MD5, RSASignaturePadding.Pkcs1);
-            string signedString = Convert.ToBase64String(signedData);
-
-            RemotePost myremotepost = new RemotePost(c);
-            myremotepost.Url = paymentUrl;
-            myremotepost.Inputs.Add(new string[] { "MerId", merchantId });
-            myremotepost.Inputs.Add(new string[] { "Amt", amtStr });
-            myremotepost.Inputs.Add(new string[] { "PaymentTypeObjId", paymentTypeObjId });
-            myremotepost.Inputs.Add(new string[] { "MerTransId", merTransId });
-            myremotepost.Inputs.Add(new string[] { "ReturnUrl", returnUrl });
-            myremotepost.Inputs.Add(new string[] { "CheckValue", signedString });
-            await myremotepost.PostAsync();
+            return Convert.ToBase64String(signedData);
         }
-
+           
         public static bool PaymentVerify(HttpRequest curRequest, out string merId, out string amt, out string merTransId, out string transId, out string transTime)
         {
             merId = curRequest.Form["merId"].ToString();

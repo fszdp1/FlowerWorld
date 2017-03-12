@@ -56,7 +56,7 @@ namespace FlowerWorld.Controllers
 
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<ActionResult> Index(OrderViewModel ovm)
+        public ActionResult Index(OrderViewModel ovm)
         {
             ViewBag.Request = Request;
             //更新客户联系信息
@@ -129,7 +129,7 @@ namespace FlowerWorld.Controllers
             catch
             {
                 succeed = false;
-                await Response.WriteAsync("<script>alert('数据未成功保存，请重新尝试！');</script>");
+                Response.WriteAsync("<script>alert('数据未成功保存，请重新尝试！');</script>");
             }
             if (succeed)
             {//进入支付处理
@@ -143,17 +143,27 @@ namespace FlowerWorld.Controllers
                         break;
                     }
                 }
-                string merchantId = "Flower001";
-                string returnUrl = "http://" + Request.Host + Url.Action("Index", "Payment");
-                string amtStr = Request.Form["paymentAmt"];
-                string merTransId = payId.ToString();
+                //string merchantId = "Flower001";
+                //string returnUrl = "http://" + Request.Host + Url.Action("Index", "Payment");
+                //string amtStr = Request.Form["paymentAmt"];
+                //string merTransId = payId.ToString();
                 //根据paymentMethod产生提交付款的对象并提交。以下为暂时的写法，无扩展性。
                 //理想的写法是定义付款接口，针对不同的付款机构，写一个实现了接口的对应的付款类
                 //在这里根据方法名构建付款对象，然后再调用接口方法实现付款。
                 //这里写法是固定的，暂时使用。
-                await RemotePost.PaymentPost(HttpContext, paymentUrl, merchantId, returnUrl, Request.Form["paymentType"], amtStr, merTransId);
+                //await RemotePost.PaymentPost(HttpContext, paymentUrl, merchantId, returnUrl, Request.Form["paymentType"], amtStr, merTransId);
+                PayRequestInfo pri = new PayRequestInfo();
+                pri.Amt = Request.Form["paymentAmt"];
+                pri.MerId = "Flower001";
+                pri.MerTransId = payId.ToString();
+                pri.PaymentTypeObjId = Request.Form["paymentType"];
+                pri.PostUrl = paymentUrl;
+                pri.ReturnUrl = "http://" + Request.Host + Url.Action("Index", "Payment");
+                pri.CheckValue = RemotePost.getCheckValue(pri.MerId, pri.ReturnUrl, pri.PaymentTypeObjId, pri.Amt, pri.MerTransId);
+                return View("PayRequest", pri);
             }
-           
+            else
+            {
                 //如果未能成功保存数据则执行以下行。由于ovm中未能将原来的order等数据带回，这里要重新获取
                 ovm.orders = new List<OrderInfo>();
                 ovm.receivers = new List<Consignee>();
@@ -179,7 +189,7 @@ namespace FlowerWorld.Controllers
                     }
                 }
                 return View("Order", ovm);
-            
+            }
         }
 
         //该方法由ajax调用

@@ -115,5 +115,15 @@ namespace FlowerWorld.Models
         public int CurrentPage { get; set; }
         public int TotalPages => (int)Math.Ceiling((decimal)TotalItems / ItemsPerPage);
     }
-    
+    public class PayRequestInfo
+    {
+        public string PostUrl { get; set; }
+        public string MerId { get; set; }
+        public string Amt { get; set; }
+        public string PaymentTypeObjId { get; set; }
+        public string MerTransId { get; set; }
+        public string ReturnUrl { get; set; }
+        public string CheckValue { get; set; }
+           
+    }
 }
