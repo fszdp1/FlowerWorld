@@ -153,8 +153,7 @@ namespace FlowerWorld.Controllers
                 //这里写法是固定的，暂时使用。
                 await RemotePost.PaymentPost(HttpContext, paymentUrl, merchantId, returnUrl, Request.Form["paymentType"], amtStr, merTransId);
             }
-            else
-            {
+           
                 //如果未能成功保存数据则执行以下行。由于ovm中未能将原来的order等数据带回，这里要重新获取
                 ovm.orders = new List<OrderInfo>();
                 ovm.receivers = new List<Consignee>();
@@ -180,7 +179,7 @@ namespace FlowerWorld.Controllers
                     }
                 }
                 return View("Order", ovm);
-            }
+            
         }
 
         //该方法由ajax调用
