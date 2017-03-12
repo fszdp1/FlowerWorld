@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 namespace FlowerWorld.Infrastructure
 {
     /// <summary>
-    /// RemotePoat 的摘要说明
+    /// RemotePost 的摘要说明
     /// </summary>
     public class RemotePost
     {
@@ -25,24 +25,24 @@ namespace FlowerWorld.Infrastructure
             context = _context;
         }
 
-        public void Post()
+        public async Task PostAsync()
         {
 
             context.Response.Clear();
-            context.Response.WriteAsync("<html><head>");
-            context.Response.WriteAsync(string.Format("</head><body onload=\"document.{0}.submit()\">", FormName));
-            context.Response.WriteAsync(string.Format("<form name=\"{0}\" method=\"{1}\" action=\"{2}\" >",
+            await context.Response.WriteAsync("<html><head>");
+            await context.Response.WriteAsync(string.Format("</head><body onload=\"document.{0}.submit()\">", FormName));
+            await context.Response.WriteAsync(string.Format("<form name=\"{0}\" method=\"{1}\" action=\"{2}\" >",
                 FormName, Method, Url));
             foreach (string[] ss in Inputs)
             {
-                context.Response.WriteAsync(string.Format("<input name=\"{0}\" type=\"hidden\" value=\"{1}\">", ss[0], ss[1]));
+                await context.Response.WriteAsync(string.Format("<input name=\"{0}\" type=\"hidden\" value=\"{1}\">", ss[0], ss[1]));
             }
-            context.Response.WriteAsync("</form>");
-            context.Response.WriteAsync("</body></html>");
+            await context.Response.WriteAsync("</form>");
+            await context.Response.WriteAsync("</body></html>");
             //context.Response.End();
         }
 
-        public static void PaymentPost(HttpContext c, string paymentUrl, string merchantId, string returnUrl, string paymentTypeObjId, string amtStr, string merTransId)
+        public async static Task PaymentPost(HttpContext c, string paymentUrl, string merchantId, string returnUrl, string paymentTypeObjId, string amtStr, string merTransId)
         {
             string xmlKey = File.ReadAllText("D:\\" + merchantId + ".xml");
             RSAParameters PrvKeyInfo = RSAUtility.GetPrvKeyFromXmlString(xmlKey);
@@ -62,7 +62,7 @@ namespace FlowerWorld.Infrastructure
             myremotepost.Inputs.Add(new string[] { "MerTransId", merTransId });
             myremotepost.Inputs.Add(new string[] { "ReturnUrl", returnUrl });
             myremotepost.Inputs.Add(new string[] { "CheckValue", signedString });
-            myremotepost.Post();
+            await myremotepost.PostAsync();
         }
 
         public static bool PaymentVerify(HttpRequest curRequest, out string merId, out string amt, out string merTransId, out string transId, out string transTime)
